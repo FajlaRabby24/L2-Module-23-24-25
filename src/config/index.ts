@@ -2,6 +2,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const config = {
+  admin_name: process.env.ADMIN_NAME,
+  admin_email: process.env.ADMIN_EMAIL || "",
+  admin_password: process.env.ADMIN_PASSWORD,
   database_url: process.env.DATABASE_URL,
   port: process.env.PORT || 3000,
   app_url: process.env.APP_URL || "http://localhost:4000",

@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { paginationSortingHelper } from "../../helpers/paginationSortingHelper";
 import { postService } from "./post.service";
 
 // create new post
@@ -37,8 +38,10 @@ const getAllPost = async (req: Request, res: Response) => {
     const limit = Number(req.query.limit ?? 10);
     const skip = (page - 1) * limit;
 
-    const sortBy = req.query.sortBy;
-    const sortOrder = req.query.sortOrder;
+    const sortBy = req.query.sortBy as string;
+    const sortOrder = req.query.sortOrder as string;
+
+    const options = paginationSortingHelper(req.query);
 
     const result = await postService.getAllPost(
       searchQuery as string,

@@ -58,9 +58,12 @@ const getAllPost = async (
         contains: authorId,
       },
     },
-    orderBy: {
-      sortBy: sortOrder,
-    },
+    orderBy:
+      sortBy && sortOrder
+        ? {
+            [sortBy]: sortOrder,
+          }
+        : { createdAt: "desc" },
   });
 
   return result;

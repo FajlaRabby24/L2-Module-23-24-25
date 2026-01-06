@@ -67,4 +67,6 @@ router.post("/", auth(UserRoles.USER), postController.createPost);
 
 router.get("/", postController.getAllPost);
 
+router.get("/:postId", postController.getPostById);
+
 export const postRouter = router;

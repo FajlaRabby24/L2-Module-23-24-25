@@ -59,7 +59,24 @@ const getAllPost = async (req: Request, res: Response) => {
   }
 };
 
+// get post by id
+const getPostById = async (req: Request, res: Response) => {
+  try {
+    const result = await postService.getPostById(req.params.postId as string);
+    res.status(200).json({
+      success: true,
+      data: result,
+    });
+  } catch (error) {
+    res.status(400).json({
+      error: "post retrived failed",
+      details: error,
+    });
+  }
+};
+
 export const postController = {
   createPost,
   getAllPost,
+  getPostById,
 };

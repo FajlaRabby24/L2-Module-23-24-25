@@ -4,7 +4,7 @@ const createComment = async (payload: {
   content: string;
   authorId: string;
   postId: string;
-  parentId: string;
+  parentId?: string;
 }) => {
   await prisma.post.findUniqueOrThrow({
     where: {
@@ -12,17 +12,17 @@ const createComment = async (payload: {
     },
   });
 
-  await prisma.comment.findUniqueOrThrow({
-    where: {
-      id: payload.parentId,
-    },
-  });
+  if (payload?.parentId) {
+    await prisma.comment.findUniqueOrThrow({
+      where: {
+        id: payload.parentId,
+      },
+    });
+  }
 
-  const result = await prisma.comment.create({
+  return await prisma.comment.create({
     data: payload,
   });
-
-  return result;
 };
 
 export const commentService = {

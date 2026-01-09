@@ -6,6 +6,7 @@ const createComment = async (req: Request, res: Response) => {
     const user = req.user;
     req.body.authorId = user?.id;
     const result = await commentService.createComment(req.body);
+
     res.status(201).json({
       success: true,
       data: result,

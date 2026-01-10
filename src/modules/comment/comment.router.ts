@@ -5,6 +5,9 @@ import { commentController } from "./comment.controller";
 
 const router = Router();
 
+router.get("/:commentId", commentController.getCommentById);
+
+// create comment -> admin, user
 router.post(
   "/",
   auth(UserRoles.ADMIN, UserRoles.USER),

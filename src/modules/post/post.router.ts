@@ -63,7 +63,11 @@ export const auth = (...roles: string[]) => {
   };
 };
 
-router.post("/", auth(UserRoles.USER), postController.createPost);
+router.post(
+  "/",
+  auth(UserRoles.USER, UserRoles.ADMIN),
+  postController.createPost
+);
 
 router.get("/", postController.getAllPost);
 

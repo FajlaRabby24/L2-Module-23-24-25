@@ -282,9 +282,48 @@ const getMyPosts = async (authorId: string) => {
   };
 };
 
+/**
+ * user -> sudhu nijar post update korte parbe, isFeatured update korte parbe na
+ * admin -> sobar post update korte parbe
+ */
+
+const updatePost = async (
+  postId: string,
+  data: Partial<Post>,
+  authorId: string
+) => {
+  const postData = await prisma.post.findUnique({
+    where: {
+      id: postId,
+    },
+    select: {
+      id: true,
+      authorId: true,
+    },
+  });
+
+  if (!postData) {
+    throw new Error(`No post found by this id (${postId})`);
+  }
+
+  if (postData.authorId !== authorId) {
+    throw new Error("You are not the owner/creator of the post!");
+  }
+
+  const result = await prisma.post.update({
+    where: {
+      id: postId,
+    },
+    data,
+  });
+
+  return result;
+};
+
 export const postService = {
   createPost,
   getAllPost,
   getPostById,
   getMyPosts,
+  updatePost,
 };

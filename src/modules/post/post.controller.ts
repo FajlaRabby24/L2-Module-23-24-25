@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { UserRoles } from "../../constant";
 import { paginationSortingHelper } from "../../helpers/paginationSortingHelper";
 import { sendResponse } from "../../utils/sendResponse";
 import { postService } from "./post.service";
@@ -99,13 +100,16 @@ const updatePost = async (req: Request, res: Response) => {
     if (!user) {
       throw new Error("You are unauthorized!");
     }
+    const isAdmin = user.role === UserRoles.ADMIN;
+    console.log({ user });
 
     const postId = req.params.postId;
 
     const result = await postService.updatePost(
       postId as string,
       req.body,
-      user?.id as string
+      user?.id as string,
+      isAdmin
     );
 
     sendResponse(res, 200, true, "Post retrived successfully!", result);

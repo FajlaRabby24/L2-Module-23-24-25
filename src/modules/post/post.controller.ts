@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { paginationSortingHelper } from "../../helpers/paginationSortingHelper";
+import { sendResponse } from "../../utils/sendResponse";
 import { postService } from "./post.service";
 
 // create new post
@@ -75,8 +76,26 @@ const getPostById = async (req: Request, res: Response) => {
   }
 };
 
+// get my posts
+const getMyPosts = async (req: Request, res: Response) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      throw new Error("You are unauthorized!");
+    }
+
+    const result = await postService.getMyPosts(user?.id as string);
+    sendResponse(res, 200, true, "Post retrived successfully!", result);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "post retrived failed";
+    sendResponse(res, 400, false, errorMessage);
+  }
+};
+
 export const postController = {
   createPost,
   getAllPost,
   getPostById,
+  getMyPosts,
 };

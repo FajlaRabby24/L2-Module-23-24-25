@@ -30,6 +30,21 @@ export const errorHandler = (
       errorMessage = "Foreign key constraint failed";
     }
   }
+  // PrismaClientUnknownRequestError
+  else if (err instanceof Prisma.PrismaClientUnknownRequestError) {
+    statusCode = 500;
+    errorMessage = "Error occurred during query execution";
+  }
+  // PrismaClientInitializationError
+  else if (err instanceof Prisma.PrismaClientInitializationError) {
+    if (err.errorCode === "P1000") {
+      statusCode = 401;
+      errorMessage = "Authentication failed. Please check your creditials!";
+    } else if (err.errorCode === "P1001") {
+      statusCode = 400;
+      errorMessage = "Can't reach database server";
+    }
+  }
 
   res.status(statusCode);
   // res.render("error from error handler ----", { error: err });

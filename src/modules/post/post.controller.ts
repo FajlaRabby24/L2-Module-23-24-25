@@ -95,14 +95,13 @@ const getMyPosts = async (req: Request, res: Response) => {
   }
 };
 
-const updatePost = async (req: Request, res: Response) => {
+const updatePost = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.user;
     if (!user) {
       throw new Error("You are unauthorized!");
     }
     const isAdmin = user.role === UserRoles.ADMIN;
-    console.log({ user });
 
     const postId = req.params.postId;
 
@@ -113,11 +112,12 @@ const updatePost = async (req: Request, res: Response) => {
       isAdmin
     );
 
-    sendResponse(res, 200, true, "Post retrived successfully!", result);
+    sendResponse(res, 200, true, "Post updated successfully!", result);
   } catch (error) {
-    const errorMessage =
-      error instanceof Error ? error.message : "post retrived failed";
-    sendResponse(res, 400, false, errorMessage);
+    // const errorMessage =
+    // error instanceof Error ? error.message : "post retrived failed";
+    // sendResponse(res, 400, false, "Post updated failed!", error);
+    next(error);
   }
 };
 

@@ -63,6 +63,8 @@ export const auth = (...roles: string[]) => {
   };
 };
 
+router.get("/stats", auth(UserRoles.ADMIN), postController.getStats);
+
 router.post(
   "/",
   auth(UserRoles.USER, UserRoles.ADMIN),

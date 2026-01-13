@@ -75,8 +75,13 @@
 //   getAllPost,
 // };
 
-import { CommentStatus, Post } from "../../../generated/prisma/client";
+import {
+  CommentStatus,
+  Post,
+  PostStatus,
+} from "../../../generated/prisma/client";
 import { PostWhereInput } from "../../../generated/prisma/models";
+import { UserRoles } from "../../constant";
 import { prisma } from "../../lib/prisma";
 
 const createPost = async (
@@ -362,6 +367,67 @@ const deletePost = async (
   return result;
 };
 
+const getStats = async () => {
+  return await prisma.$transaction(async (tx) => {
+    // const totalPosts = await tx.post.count();
+    // const publishedPosts = await tx.post.count({
+    //   where: {
+    //     status: PostStatus.PUBLISHED,
+    //   },
+    // });
+    // const draftPosts = await tx.post.count({
+    //   where: {
+    //     status: PostStatus.DRAFT,
+    //   },
+    // });
+    // const archivedPosts = await tx.post.count({
+    //   where: {
+    //     status: PostStatus.ARCHIVED,
+    //   },
+    // });
+
+    const [
+      totalPosts,
+      publishedPosts,
+      draftPosts,
+      archivedPosts,
+      totalComments,
+      approvedComments,
+      rejectComments,
+      totalUser,
+      adminCount,
+      userCount,
+      totalViews,
+    ] = await Promise.all([
+      await tx.post.count(),
+      await tx.post.count({ where: { status: PostStatus.PUBLISHED } }),
+      await tx.post.count({ where: { status: PostStatus.DRAFT } }),
+      await tx.post.count({ where: { status: PostStatus.ARCHIVED } }),
+      await tx.comment.count(),
+      await tx.comment.count({ where: { status: CommentStatus.APPROVED } }),
+      await tx.comment.count({ where: { status: CommentStatus.REJECT } }),
+      await tx.user.count(),
+      await tx.user.count({ where: { role: UserRoles.ADMIN } }),
+      await tx.user.count({ where: { role: UserRoles.USER } }),
+      await tx.post.aggregate({ _sum: { views: true } }),
+    ]);
+
+    return {
+      totalPosts,
+      publishedPosts,
+      draftPosts,
+      archivedPosts,
+      totalComments,
+      approvedComments,
+      rejectComments,
+      totalUser,
+      adminCount,
+      userCount,
+      totalViews: totalViews._sum.views,
+    };
+  });
+};
+
 export const postService = {
   createPost,
   getAllPost,
@@ -369,4 +435,5 @@ export const postService = {
   getMyPosts,
   updatePost,
   deletePost,
+  getStats,
 };

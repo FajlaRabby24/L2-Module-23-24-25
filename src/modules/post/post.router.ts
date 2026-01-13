@@ -85,4 +85,10 @@ router.patch(
   postController.updatePost
 );
 
+router.delete(
+  "/:postId",
+  auth(UserRoles.ADMIN, UserRoles.USER),
+  postController.deletePost
+);
+
 export const postRouter = router;
